@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate for naviga
 import React, { useState, useEffect } from 'react';
 
 function Home() {
+  const [showBulkInput, setShowBulkInput] = useState(false);
+
   useEffect(() => {
     const savedItems = JSON.parse(localStorage.getItem('items'));
     const savedRankingName = localStorage.getItem('rankingName');
@@ -54,7 +56,6 @@ function Home() {
     }
   };
 
-
   // Function to remove an item from the items list by its index
   const handleRemoveItem = (index) => {
     setItems(items.filter((_, i) => i !== index)); // Remove the item at the specified index
@@ -65,12 +66,45 @@ function Home() {
     navigate('/rank', { state: { items, rankingName, question } }); // Navigate to the rank page with the items, ranking name, and question
   };
 
+  const handleReset = () => {
+    setItems([]);
+    setItemInput('');
+    setRankingName('');
+    setQuestion('');
+    localStorage.removeItem('items');
+    localStorage.removeItem('rankingName');
+    localStorage.removeItem('question');
+  };
 
+
+  const [bulkInput, setBulkInput] = useState('');
+
+const handleBulkRanking = () => {
+  const itemsArray = bulkInput.split(',').map((item) => item.trim());
+  setItems(itemsArray);
+  setShowBulkInput(false);
+};
 
 
   return (
     <div>
       <h1>Item Ranker</h1>
+
+<button onClick={() => setShowBulkInput(!showBulkInput)}>
+  {showBulkInput ? 'Hide Bulk Input' : 'Bulk Ranking'}
+</button>
+
+{showBulkInput && (
+  <div>
+    <textarea
+      placeholder="Enter items separated by commas"
+      value={bulkInput}
+      onChange={(e) => setBulkInput(e.target.value)}
+    />
+    <button onClick={handleBulkRanking}>Rank Items</button>
+  </div>
+)}
+
       <div>
         <input
           type="text"
@@ -113,6 +147,7 @@ function Home() {
       <button onClick={startRanking} disabled={items.length < 2}> {/* Button to start ranking */}
         Start Ranking
       </button>
+      <button onClick={handleReset}>Reset Values</button>
     </div>
   );
 }
