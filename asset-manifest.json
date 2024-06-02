@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/parwise-ranking/static/css/main.e223cdaa.css",
+    "main.js": "/parwise-ranking/static/js/main.de4976aa.js",
+    "static/js/453.79056060.chunk.js": "/parwise-ranking/static/js/453.79056060.chunk.js",
+    "index.html": "/parwise-ranking/index.html",
+    "main.e223cdaa.css.map": "/parwise-ranking/static/css/main.e223cdaa.css.map",
+    "main.de4976aa.js.map": "/parwise-ranking/static/js/main.de4976aa.js.map",
+    "453.79056060.chunk.js.map": "/parwise-ranking/static/js/453.79056060.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e223cdaa.css",
+    "static/js/main.de4976aa.js"
+  ]
+}
