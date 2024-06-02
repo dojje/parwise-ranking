@@ -1,7 +1,7 @@
 {
   "name": "parwise-ranking",
   "version": "0.1.0",
-  "homepage": "https://dojje.github.io/parwise-ranking",
+  "homepage": "https://dojje.github.io/parwise-ranking/",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
@@ -10,7 +10,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.23.1",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^3.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -19,7 +19,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -d build -r https://github.com/dojje/parwise-ranking.git",
     "clean": "gh-pages-clean"
   },
   "eslintConfig": {
