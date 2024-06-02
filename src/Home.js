@@ -63,7 +63,7 @@ function Home() {
 
   // Function to navigate to the ranking page with the entered data
   const startRanking = () => {
-    navigate('/rank', { state: { items, rankingName, question } }); // Navigate to the rank page with the items, ranking name, and question
+    navigate('/parwise-ranking/rank', { state: { items, rankingName, question } }); // Navigate to the rank page with the items, ranking name, and question
   };
 
   const handleReset = () => {

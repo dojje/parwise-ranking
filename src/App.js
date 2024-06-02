@@ -9,8 +9,8 @@ function App() {
     <Router> {/* Set up the Router for handling navigation */}
       <div className="App">
         <Routes> {/* Define the routes for the application */}
-          <Route path="/" element={<Home />} /> {/* Route for the Home component */}
-          <Route path="/rank" element={<Rank />} /> {/* Route for the Rank component */}
+          <Route path="/parwise-ranking/" element={<Home />} /> {/* Route for the Home component */}
+          <Route path="/parwise-ranking/rank" element={<Rank />} /> {/* Route for the Rank component */}
         </Routes>
       </div>
     </Router>
