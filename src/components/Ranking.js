@@ -68,9 +68,8 @@ function Ranking() {
         currentPair && (
           <div>
             <p>Select the better option:</p>
-            <button onClick={() => handleVote(-1)}>{currentPair.item1}</button>
-            <button onClick={() => handleVote(1)}>{currentPair.item2}</button>
-            <button onClick={() => handleVote(0)}>Equal</button>
+            <button onClick={() => handleVote(currentPair.item1)}>{currentPair.item1}</button>
+            <button onClick={() => handleVote(currentPair.item2)}>{currentPair.item2}</button>
           </div>
         )
       )}

@@ -20,22 +20,40 @@ def create_ranking():
         'name': data['name'],
         'question': data['question'],
         'items': data['items'],
-        'created_at': datetime.now(timezone.utc)
+        'created_at': datetime.now(timezone.utc),
+        "votes": 0
     }
     result = rankings_collection.insert_one(ranking)
-    print(str(result.inserted_id))
     return jsonify({'id': str(result.inserted_id)}), 201
 
 @app.route('/submit-vote', methods=['POST'])
 def submit_vote():
     data = request.json
-    vote = {
-        'ranking_id': data['ranking_id'],
-        'item1': data['item1'],
-        'item2': data['item2'],
-        'result': data['result']
-    }
-    votes_collection.insert_one(vote)
+    ranking_id = data['ranking_id']
+    item1 = data['item1']
+    item2 = data['item2']
+    result = data['result']
+
+    # Check if the vote already exists
+    vote = votes_collection.find_one({'ranking_id': ranking_id, 'item1': item1, 'item2': item2})
+    if not vote:
+        vote = votes_collection.find_one({'ranking_id': ranking_id, 'item1': item2, 'item2': item1})
+        if vote:
+            # Swap items if the reverse pair exists
+            item1, item2 = item2, item1
+
+    if vote:
+        # Update the score based on the result
+        if result == item1:
+            new_score = vote['score'] + 1
+        else:
+            new_score = vote['score'] - 1
+        votes_collection.update_one({'_id': vote['_id']}, {'$set': {'score': new_score}})
+    else:
+        # Create a new vote pair with the initial score
+        initial_score = 1 if result == item1 else -1
+        votes_collection.insert_one({'ranking_id': ranking_id, 'item1': item1, 'item2': item2, 'score': initial_score})
+
     return '', 204
 
 @app.route('/get-ranking/<id>', methods=['GET'])
@@ -44,7 +62,6 @@ def get_ranking(id):
     ranking = rankings_collection.find_one({'_id': ranking_id})
     if not ranking:
         return jsonify({'error': 'Ranking not found'}), 404
-    # Convert _id to string before jsonify
     ranking['_id'] = str(ranking['_id'])
     return jsonify(ranking), 200
 
@@ -60,9 +77,33 @@ def final_ranking(id):
         return jsonify({'error': 'Invalid ID format'}), 400
 
 def compile_results(votes):
-    items = set(v['item1'] for v in votes).union(set(v['item2'] for v in votes))
-    # Implement your ranking algorithm here based on votes
-    return list(items)
+    from collections import defaultdict
+
+    # Initialize dictionaries to store wins and losses
+    score_map = defaultdict(int)
+
+    # Aggregate scores
+    for vote in votes:
+        item1 = vote['item1']
+        item2 = vote['item2']
+        score = vote['score']
+        score_map[item1] += score
+        score_map[item2] -= score
+
+    # Convert score_map to a sorted list of items using quicksort
+    items = list(score_map.keys())
+
+    def quicksort(items):
+        if len(items) <= 1:
+            return items
+        pivot = items[len(items) // 2]
+        left = [x for x in items if score_map[x] > score_map[pivot]]
+        middle = [x for x in items if score_map[x] == score_map[pivot]]
+        right = [x for x in items if score_map[x] < score_map[pivot]]
+        return quicksort(left) + middle + quicksort(right)
+
+    sorted_items = quicksort(items)
+    return sorted_items
 
 if __name__ == '__main__':
     app.run(debug=True)
