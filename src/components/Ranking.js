@@ -9,6 +9,7 @@ function Ranking() {
   const [comparisons, setComparisons] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [results, setResults] = useState(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchRanking = async () => {
@@ -19,6 +20,7 @@ function Ranking() {
         setCurrentPair(pairs[0]);
       } catch (error) {
         console.error('Error fetching ranking:', error);
+        setError(true)
       }
     };
     fetchRanking();
@@ -54,7 +56,10 @@ function Ranking() {
 
   return (
     <div className="ranking">
-      <h1>Ranking</h1>
+      {error
+        ? <h1>Code not found :&#40;</h1>
+        : <h1>Ranking</h1>
+      }
       {results ? (
         <div>
           <h2>Final Results</h2>

@@ -3,6 +3,8 @@ from flask_cors import CORS
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from datetime import datetime, timezone
+import secrets
+import string
 
 app = Flask(__name__)
 CORS(app)
@@ -13,23 +15,29 @@ db = client['ranking_db']
 rankings_collection = db['rankings']
 votes_collection = db['votes']
 
+def generate_code(length=7):
+    characters = string.ascii_letters + string.digits
+    return ''.join(secrets.choice(characters) for _ in range(length)).lower()
+
 @app.route('/create-ranking', methods=['POST'])
 def create_ranking():
     data = request.json
+    code = generate_code()
     ranking = {
+        '_id': code,
         'name': data['name'],
         'question': data['question'],
         'items': data['items'],
         'created_at': datetime.now(timezone.utc),
-        "votes": 0
+        'votes': 0
     }
-    result = rankings_collection.insert_one(ranking)
-    return jsonify({'id': str(result.inserted_id)}), 201
+    rankings_collection.insert_one(ranking)
+    return jsonify({'id': code}), 201
 
 @app.route('/submit-vote', methods=['POST'])
 def submit_vote():
     data = request.json
-    ranking_id = data['ranking_id']
+    ranking_id = data['ranking_id'].lower()
     item1 = data['item1']
     item2 = data['item2']
     result = data['result']
@@ -58,7 +66,7 @@ def submit_vote():
 
 @app.route('/get-ranking/<id>', methods=['GET'])
 def get_ranking(id):
-    ranking_id = ObjectId(id)
+    ranking_id = id.lower()
     ranking = rankings_collection.find_one({'_id': ranking_id})
     if not ranking:
         return jsonify({'error': 'Ranking not found'}), 404
@@ -68,11 +76,12 @@ def get_ranking(id):
 @app.route('/final-ranking/<id>', methods=['GET'])
 def final_ranking(id):
     try:
-        votes = list(votes_collection.find({'ranking_id': id}))
+        ranking_id = id.lower()
+        votes = list(votes_collection.find({'ranking_id': ranking_id}))
         if not votes:
             return jsonify({'error': 'No votes found for this ranking'}), 404
-        final_order = compile_results(votes)
-        return jsonify(final_order), 200
+        final_order, nvotes = compile_results(votes)
+        return jsonify({'final_order': final_order, 'nvotes': nvotes}), 200
     except:
         return jsonify({'error': 'Invalid ID format'}), 400
 
@@ -103,7 +112,8 @@ def compile_results(votes):
         return quicksort(left) + middle + quicksort(right)
 
     sorted_items = quicksort(items)
-    return sorted_items
+    nvotes = len(votes)
+    return sorted_items, nvotes
 
 if __name__ == '__main__':
     app.run(debug=True)

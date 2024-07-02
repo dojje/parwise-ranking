@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import "../CreateRanking.css"
 
 function CreateRanking() {
   const [name, setName] = useState('');
@@ -31,38 +32,44 @@ function CreateRanking() {
   };
 
   return (
-    <div className="create-ranking">
-      <h1>Create a Ranking</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Ranking Name:</label>
+    <div className="base">
+      <div className='logo'>
+        <h1>Create Ranking</h1>
+         <img src={process.env.PUBLIC_URL + '/logo192.png'} alt='parwise ranking logo'></img>
+      </div>
+        <div className='label'>
+          <label>Ranking Name</label>
           <input type="text" value={name} onChange={handleNameChange} required />
         </div>
-        <div>
-          <label>Ranking Question:</label>
+        <div className='label'>
+          <label>Ranking Question</label>
           <input type="text" value={question} onChange={handleQuestionChange} required />
         </div>
-        <div>
+        <div className='items'>
           <label>Items:</label>
           {items.map((item, index) => (
-            <div key={index}>
-              <input
-                type="text"
-                value={item}
-                onChange={(e) => handleItemChange(index, e)}
-                required
-              />
-              {index > 0 && (
-                <button type="button" onClick={() => handleRemoveItem(index)}>
-                  Remove
-                </button>
-              )}
-            </div>
+              <>
+                <div className='itemadder'>
+                  <input
+                    type="text"
+                    value={item}
+                    onChange={(e) => handleItemChange(index, e)}
+                    required
+                  />
+                    {index === items.length -1 ? 
+                    <button type="button" onClick={() => handleAddItem(index)}>
+                      Add Item
+                    </button> 
+                    :
+                    <button type="button" onClick={() => handleRemoveItem(index)}>
+                      Remove
+                    </button> 
+                    }
+                </div>
+              </>
           ))}
-          <button type="button" onClick={handleAddItem}>Add Item</button>
         </div>
-        <button type="submit">Create Ranking</button>
-      </form>
+        <button type="submit" onClick={handleSubmit}>Create Ranking</button>
     </div>
   );
 }
