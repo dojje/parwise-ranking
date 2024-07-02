@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import "../Ranking.css";
 
 function Ranking() {
   const { id } = useParams();
@@ -10,11 +11,13 @@ function Ranking() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [results, setResults] = useState(null);
   const [error, setError] = useState(false);
+  const [rankData, setRankData] = useState(null);
 
   useEffect(() => {
     const fetchRanking = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/get-ranking/${id}`);
+        setRankData(response.data);
         const pairs = generateComparisons(response.data.items);
         setComparisons(pairs);
         setCurrentPair(pairs[0]);
@@ -33,7 +36,13 @@ function Ranking() {
         pairs.push({ item1: items[i], item2: items[j], result: null });
       }
     }
-    return pairs;
+
+    let shuffled = pairs
+    .map(value => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value)
+
+    return shuffled;
   };
 
   const handleVote = async (result) => {
@@ -47,6 +56,7 @@ function Ranking() {
         setCurrentPair(comparisons[nextIndex]);
       } else {
         const response = await axios.get(`http://localhost:5000/final-ranking/${id}`);
+        console.log(response.data)
         setResults(response.data);
       }
     } catch (error) {
@@ -55,27 +65,36 @@ function Ranking() {
   };
 
   return (
-    <div className="ranking">
-      {error
-        ? <h1>Code not found :&#40;</h1>
-        : <h1>Ranking</h1>
-      }
+    <div className="base">
+
+      <a className='logo' href="/parwise-ranking">
+        {error
+          ? <h1>Code not found :&#40;</h1>
+          : <h1>Ranking</h1>
+        }
+        <img src={process.env.PUBLIC_URL + '/logo192.png'} alt='parwise ranking logo'></img>
+      </a>
       {results ? (
         <div>
-          <h2>Final Results</h2>
+          <h2>{rankData.name}</h2>
           <ol>
-            {results.map((item, index) => (
+            {results.final_order.map((item, index) => (
               <li key={index}>{item}</li>
             ))}
           </ol>
+          <i>{Math.floor(results.nvotes / comparisons.length)} votes</i>
         </div>
       ) : (
         currentPair && (
-          <div>
-            <p>Select the better option:</p>
-            <button onClick={() => handleVote(currentPair.item1)}>{currentPair.item1}</button>
-            <button onClick={() => handleVote(currentPair.item2)}>{currentPair.item2}</button>
+          <>
+          <div className='voting'>
+            {rankData.question}
+            <div className='voteButtons'>
+              <button onClick={() => handleVote(currentPair.item1)}>{currentPair.item1}</button>
+              <button onClick={() => handleVote(currentPair.item2)}>{currentPair.item2}</button>
+            </div>
           </div>
+          </>
         )
       )}
     </div>
@@ -83,3 +102,4 @@ function Ranking() {
 }
 
 export default Ranking;
+// http://localhost:3000/rank/onujbt4

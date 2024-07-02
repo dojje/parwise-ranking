@@ -5,6 +5,7 @@ from bson.objectid import ObjectId
 from datetime import datetime, timezone
 import secrets
 import string
+from collections import defaultdict
 
 app = Flask(__name__)
 CORS(app)
@@ -27,7 +28,7 @@ def create_ranking():
         '_id': code,
         'name': data['name'],
         'question': data['question'],
-        'items': data['items'],
+        'items': data['submitItems'],
         'created_at': datetime.now(timezone.utc),
         'votes': 0
     }
@@ -52,15 +53,12 @@ def submit_vote():
 
     if vote:
         # Update the score based on the result
-        if result == item1:
-            new_score = vote['score'] + 1
-        else:
-            new_score = vote['score'] - 1
-        votes_collection.update_one({'_id': vote['_id']}, {'$set': {'score': new_score}})
+        new_score = vote['score'] + 1 if result == item1 else vote['score'] - 1
+        votes_collection.update_one({'_id': vote['_id']}, {'$set': {'score': new_score, 'votes': vote.get('votes', 0) + 1}})
     else:
         # Create a new vote pair with the initial score
         initial_score = 1 if result == item1 else -1
-        votes_collection.insert_one({'ranking_id': ranking_id, 'item1': item1, 'item2': item2, 'score': initial_score})
+        votes_collection.insert_one({'ranking_id': ranking_id, 'item1': item1, 'item2': item2, 'score': initial_score, 'votes': 1})
 
     return '', 204
 
@@ -82,38 +80,26 @@ def final_ranking(id):
             return jsonify({'error': 'No votes found for this ranking'}), 404
         final_order, nvotes = compile_results(votes)
         return jsonify({'final_order': final_order, 'nvotes': nvotes}), 200
-    except:
-        return jsonify({'error': 'Invalid ID format'}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 def compile_results(votes):
-    from collections import defaultdict
-
-    # Initialize dictionaries to store wins and losses
     score_map = defaultdict(int)
+    total_votes = 0
 
     # Aggregate scores
     for vote in votes:
         item1 = vote['item1']
         item2 = vote['item2']
         score = vote['score']
+        vote_count = vote.get('votes', 1)  # Default to 1 if 'votes' field doesn't exist
         score_map[item1] += score
         score_map[item2] -= score
+        total_votes += vote_count
 
-    # Convert score_map to a sorted list of items using quicksort
-    items = list(score_map.keys())
-
-    def quicksort(items):
-        if len(items) <= 1:
-            return items
-        pivot = items[len(items) // 2]
-        left = [x for x in items if score_map[x] > score_map[pivot]]
-        middle = [x for x in items if score_map[x] == score_map[pivot]]
-        right = [x for x in items if score_map[x] < score_map[pivot]]
-        return quicksort(left) + middle + quicksort(right)
-
-    sorted_items = quicksort(items)
-    nvotes = len(votes)
-    return sorted_items, nvotes
+    # Sort items by score
+    sorted_items = sorted(score_map.keys(), key=lambda x: score_map[x], reverse=True)
+    return sorted_items, total_votes
 
 if __name__ == '__main__':
     app.run(debug=True)

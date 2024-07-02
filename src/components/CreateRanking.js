@@ -24,7 +24,10 @@ function CreateRanking() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/create-ranking', { name, question, items });
+      let submitItems = items.filter(function(str) {
+        return str.trim() !== "";
+      });
+      const response = await axios.post('http://localhost:5000/create-ranking', { name, question, submitItems});
       navigate(`/rank/${response.data.id}`);
     } catch (error) {
       console.error('Error creating ranking:', error);
@@ -33,10 +36,10 @@ function CreateRanking() {
 
   return (
     <div className="base">
-      <div className='logo'>
+      <a className='logo' href="/parwise-ranking">
         <h1>Create Ranking</h1>
          <img src={process.env.PUBLIC_URL + '/logo192.png'} alt='parwise ranking logo'></img>
-      </div>
+      </a>
         <div className='label'>
           <label>Ranking Name</label>
           <input type="text" value={name} onChange={handleNameChange} required />

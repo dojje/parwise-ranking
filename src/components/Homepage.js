@@ -16,10 +16,10 @@ function Homepage() {
 
   return (
     <div className="base">
-      <div className='logo'>
+      <a className='logo' href="/parwise-ranking">
         <h1>Parwise Ranking</h1>
          <img src={process.env.PUBLIC_URL + '/logo192.png'} alt='parwise ranking logo'></img>
-      </div>
+      </a>
       <div className='buttons'>
         <button className='createRanking' onClick={() => navigate('/create-ranking')}>Create a Ranking</button>
         <div className='code'>

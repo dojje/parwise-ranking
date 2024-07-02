@@ -1,0 +1,28 @@
+.voteButtons {
+    display: flex;
+}
+
+.voteButtons > button {
+    background-color: var(--back);
+    border: 4px dashed var(--func);
+    width: 120px;
+    height: 3em;
+    border-radius: 1em;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 20px;
+}
+
+.voting {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+li {
+    margin: 8px;
+    font-size: 18px;
+    font-weight: 400;
+}

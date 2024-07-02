@@ -19,7 +19,6 @@
 .code {
     margin-top: 20px;
     display: flex;
-    border: 4px dashed var(--action);
     padding: 10px;
 }
 
@@ -27,12 +26,12 @@
     padding: 8px 0;
     font-size: 18px;
     font-weight: 700;
-    border: 2px solid var(--func);
+    border: 2px solid var(--action);
     border-right: 0;
 }
 
 .code > button {
-    background-color: var(--func);
+    background-color: var(--action);
     padding: 10px;
     font-size: 18px;
     font-weight: 600;
