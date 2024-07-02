@@ -1,0 +1,40 @@
+
+.createRanking {
+    padding: 28px;
+    border: 4px dashed var(--func);
+    background-color: var(--back);
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.logo > img {
+    height: 45px;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+}
+
+.code {
+    margin-top: 20px;
+    display: flex;
+    border: 4px dashed var(--action);
+    padding: 10px;
+}
+
+.code > input{
+    padding: 8px 0;
+    font-size: 18px;
+    font-weight: 700;
+    border: 2px solid var(--func);
+    border-right: 0;
+}
+
+.code > button {
+    background-color: var(--func);
+    padding: 10px;
+    font-size: 18px;
+    font-weight: 600;
+}
+

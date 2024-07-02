@@ -1,0 +1,67 @@
+.label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px;
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.label > input {
+    padding: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    border: 2px solid var(--func);
+}
+
+.items {
+    padding: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    border: 2px solid var(--func);
+}
+
+.itemadder {
+    display: flex;
+    padding: 10px;
+}
+
+.itemadder > input{
+    padding: 8px 0;
+    font-size: 18px;
+    font-weight: 700;
+    border: 2px solid var(--func);
+    border-right: 0;
+}
+
+.itemadder > button {
+    background-color: var(--func);
+    padding: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    width: 100%;
+}
+
+.base > button {
+    margin-top: 20px;
+    padding: 28px;
+    border: 4px dashed var(--action);
+    background-color: var(--back);
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.itemadder:last-child > input {
+    border: 2px solid var(--action);
+
+}
+
+.itemadder:last-child > button {
+    background-color: var(--action);
+}
+
+
+
+.last {
+    border: 4px dashed var(--action);
+}

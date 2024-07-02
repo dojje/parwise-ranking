@@ -11,3 +11,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+html {
+  background-color: var(--back);
+  min-height: 100vh;
+}
+
+:root {
+  --text: #000000;
+  --back: #ffffff;
+  --action: #BC4749;
+  --func: #6A994E;
+}
