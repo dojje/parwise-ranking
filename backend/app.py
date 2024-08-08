@@ -102,4 +102,4 @@ def compile_results(votes):
     return sorted_items, total_votes
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", debug=True)

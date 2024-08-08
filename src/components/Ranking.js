@@ -16,7 +16,7 @@ function Ranking() {
   useEffect(() => {
     const fetchRanking = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/get-ranking/${id}`);
+        const response = await axios.get(`http://raspberrypi.local:5000/get-ranking/${id}`);
         setRankData(response.data);
         const pairs = generateComparisons(response.data.items);
         setComparisons(pairs);
@@ -49,13 +49,13 @@ function Ranking() {
     try {
       const pair = comparisons[currentIndex];
       pair.result = result;
-      await axios.post('http://localhost:5000/submit-vote', { ...pair, ranking_id: id });
+      await axios.post('http://192.168.1.3:5000/submit-vote', { ...pair, ranking_id: id });
       const nextIndex = currentIndex + 1;
       if (nextIndex < comparisons.length) {
         setCurrentIndex(nextIndex);
         setCurrentPair(comparisons[nextIndex]);
       } else {
-        const response = await axios.get(`http://localhost:5000/final-ranking/${id}`);
+        const response = await axios.get(`http://192.168.1.3:5000/final-ranking/${id}`);
         console.log(response.data)
         setResults(response.data);
       }
@@ -102,4 +102,4 @@ function Ranking() {
 }
 
 export default Ranking;
-// http://localhost:3000/rank/onujbt4
+// http://raspberrypi.local:3000/rank/onujbt4

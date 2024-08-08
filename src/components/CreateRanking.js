@@ -27,7 +27,7 @@ function CreateRanking() {
       let submitItems = items.filter(function(str) {
         return str.trim() !== "";
       });
-      const response = await axios.post('http://localhost:5000/create-ranking', { name, question, submitItems});
+      const response = await axios.post('http://192.168.1.3:5000/create-ranking', { name, question, submitItems});
       navigate(`/rank/${response.data.id}`);
     } catch (error) {
       console.error('Error creating ranking:', error);
